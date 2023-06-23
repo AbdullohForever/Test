@@ -25,30 +25,3 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
-
-
-
-
-
-
-# def register(request):
-#     if request.method == 'POST':
-#         form = RegisterForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             username = form.cleaned_data.get('username')
-#             password = form.cleaned_data.get('password')
-#             print("username:", username)
-#             print("password:", password)
-#             user = authenticate(username=username, password=password)
-#             print("User: ", user)
-
-#             if user is not None or True:
-#                 login(request, user)
-#                 print("Logging")
-#             else:
-#                 print("Not logging")
-#             return redirect('question-list')
-#     else:
-#         form = RegisterForm()
-#     return render(request, 'accounts/register.html', {'form': form})

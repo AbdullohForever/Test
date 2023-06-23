@@ -36,7 +36,7 @@ def submit_answers(request):
         for key, value in request.POST.items():
             if key.startswith('question_'):
                 question_id = key.split('question_')[1]
-                # answers[question_id] = value
+
                 if all_answers.filter(question=question_id, option=value):
                     true_answers_count+= 1
 
@@ -67,67 +67,3 @@ def submit_answers(request):
         context = {'questions':questions}
         return render(request, 'submit_answers.html', context)
 
-
-
-# @login_required
-# def submit_answers(request):
-#     if request.method == "POST":
-#         answers = {}
-#         true_answers_count = 0
-#         all_answers = Answer.objects.all()
-
-#         for key, value in request.POST.items():
-#             if key.startswith('question_'):
-#                 question_id = key.split('question_')[1]
-#                 # answers[question_id] = value
-#                 if all_answers.filter(question=question_id, option=value):
-#                     true_answers_count+= 1
-
-#         print("True answers:", true_answers_count)
-        
-#         if true_answers_count >= 3:
-#             print("generating certificate new!")
-#             name = request.user.username
-#             template = get_template('main/certificate.html')
-#             certificate_data = {
-#                 'name':name,
-#             }
-#             rendered_template = template.render(certificate_data)
-#             response = HttpResponse(content_type='application/pdf')
-#             response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
-
-#             buffer = io.BytesIO()
-#             pdf = canvas.Canvas(buffer)
-#             pdf.drawString(100, 750, rendered_template)
-#             pdf.showPage()
-#             pdf.save()
-#             pdf_data = buffer.getvalue()
-#             buffer.close()
-#             response.write(pdf_data)
-#             return response
-#         else:
-#             return HttpResponse(request, "Not enough answers")
-#         return redirect('register')
-#     else:
-#         questions = Question.objects.prefetch_related('option')
-#         context = {'questions':questions}
-#         return render(request, 'submit_answers.html', context)
-
-
-
-
-
-
-
-
-
-# class TestView(ListView):
-#     model = 
-#     template_name = 'main/test_questions.html'
-#     context_object_name = 'tests'
-
-#     def get_queryset(self):
-#         all_tests = Test.objects.all()
-#         random_tests = random.sample(list(all_tests), 10)
-#         return random_tests
-    
