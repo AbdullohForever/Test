@@ -40,26 +40,6 @@ class Answer(TimeStampedModel):
         verbose_name = "Javob"
         verbose_name_plural = "3.Javoblar"
 
-LETTER_CHOICES = (
-    ('a', 'A'),
-    ('b', 'B'),
-    ('c', 'C'),
-    ('d', 'D'),
-    ('e', 'E'),
-    ('f', 'F'),
-    ('g', 'G'),
-    ('h', 'H')
-)
-
-
-class Letters(TimeStampedModel):
-    # Other fields
-    letter = models.CharField(max_length=1, choices=LETTER_CHOICES)
-
-    def get_letter_display(self):
-        return self.get_letter_display().upper() 
-
-
 
 # 2-way
 # class Test(models.Model):

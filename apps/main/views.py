@@ -3,27 +3,19 @@ import random, io
 from django.shortcuts import render, redirect, HttpResponse
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
+from django.template.loader import get_template
 
 from .models import Question, Option, Answer
 
-from reportlab.lib.pagesizes import letter
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from django.template.loader import get_template
+from reportlab.lib.pagesizes import letter, landscape
 
-
-# def generate_pdf(name):
-#     print("Generating pdf file")
-#     pdf = canvas.Canvas("example.pdf", pagesize=letter)
-#     pdf.setFont("Helvetica", 12)
-#     pdf.drawString(100, 750, f"Hello, {name}")
-#     pdf.drawString(100, 700, "This is example PDF document created using python")
-#     pdf.save()
-    
 
 @login_required
 def question_list(request):
     questions = Question.objects.prefetch_related('option')[:5]
-    # print("Len: ", len(questions))
 
     for question in questions:
         options = list(question.option.all())
@@ -51,32 +43,75 @@ def submit_answers(request):
         print("True answers:", true_answers_count)
         
         if true_answers_count >= 3:
-            print("generating certificate new!")
             name = request.user.username
-            template = get_template('main/certificate.html')
-            certificate_data = {
-                'name':name,
-            }
-            rendered_template = template.render(certificate_data)
+            pdfmetrics.registerFont(TTFont('AlexBrush', 'AlexBrush-Regular.ttf'))
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+            
+            pdf = canvas.Canvas(response)
+            pdf.setTitle('sample')
+            pdf.setFont('AlexBrush', 36)
+            pdf.drawCentredString(300, 770, 'Python course by Meta using Coursera')
 
-            buffer = io.BytesIO()
-            pdf = canvas.Canvas(buffer)
-            pdf.drawString(100, 750, rendered_template)
-            pdf.showPage()
+            pdf.setFillColorRGB(0, 0, 255)
+            pdf.setFont("Courier-Bold", 24) # Courier-Bold, AlexBrush
+            pdf.drawCentredString(290, 720, name+' has passed successfully!')
             pdf.save()
-            pdf_data = buffer.getvalue()
-            buffer.close()
-            response.write(pdf_data)
+
             return response
         else:
-            return HttpResponse(request, "Not enough answers")
+            return HttpResponse("Not enough answers")
         return redirect('register')
     else:
         questions = Question.objects.prefetch_related('option')
         context = {'questions':questions}
         return render(request, 'submit_answers.html', context)
+
+
+
+# @login_required
+# def submit_answers(request):
+#     if request.method == "POST":
+#         answers = {}
+#         true_answers_count = 0
+#         all_answers = Answer.objects.all()
+
+#         for key, value in request.POST.items():
+#             if key.startswith('question_'):
+#                 question_id = key.split('question_')[1]
+#                 # answers[question_id] = value
+#                 if all_answers.filter(question=question_id, option=value):
+#                     true_answers_count+= 1
+
+#         print("True answers:", true_answers_count)
+        
+#         if true_answers_count >= 3:
+#             print("generating certificate new!")
+#             name = request.user.username
+#             template = get_template('main/certificate.html')
+#             certificate_data = {
+#                 'name':name,
+#             }
+#             rendered_template = template.render(certificate_data)
+#             response = HttpResponse(content_type='application/pdf')
+#             response['Content-Disposition'] = 'attachment; filename="certificate.pdf"'
+
+#             buffer = io.BytesIO()
+#             pdf = canvas.Canvas(buffer)
+#             pdf.drawString(100, 750, rendered_template)
+#             pdf.showPage()
+#             pdf.save()
+#             pdf_data = buffer.getvalue()
+#             buffer.close()
+#             response.write(pdf_data)
+#             return response
+#         else:
+#             return HttpResponse(request, "Not enough answers")
+#         return redirect('register')
+#     else:
+#         questions = Question.objects.prefetch_related('option')
+#         context = {'questions':questions}
+#         return render(request, 'submit_answers.html', context)
 
 
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.models import Question, Option, Answer, Letters
+from main.models import Question, Option, Answer
 
 @admin.register(Question)
 class TestAdmin(admin.ModelAdmin):
@@ -23,11 +23,5 @@ class TestAdmin(admin.ModelAdmin):
 class TestAdmin(admin.ModelAdmin):
     list_display = ('id', 'question', 'option')
     list_display_links = ('id', 'question', 'option')
-    # search_fields = ('text', )
     list_filter = ('question',)
-    # ordering = ['text',]
     
-
-@admin.register(Letters)
-class LettersAdmin(admin.ModelAdmin):
-    list_display = ('letter',)
